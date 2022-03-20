@@ -4,13 +4,16 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
+import tkinter as tk
 import numpy as np
-
+from tkinter import messagebox as mb
 import time
+
 
 WEIGHTING = {"Surf-Forecast":0.95, "MagicSeaweed":0.8}
 
-driver = webdriver.Chrome(executable_path=r"C:\Windows\chromedriver_win32\chromedriver.exe")
+driver = webdriver.Chrome(executable_path=r"C:\Python\Scripts\Chromedriver\chromedriver.exe")
+
 
 def surf_forecast():
     now = datetime.now()
@@ -70,18 +73,30 @@ def surf_forecast():
         swell_size_txt_pm = swell_size_pm.text
         sf_breaks_ratings.append(swell_size_txt_pm)
         #sf_breaks_np[i][4] = swell_size_txt_pm
+    
+    driver.close()
 
     max_rating_am = 0
     max_rating_pm = 0
-    for i in range(0, len(sf_breaks_dict), 5):
-        if sf_breaks_ratings[i+1] > max_rating_am:
+    print(sf_breaks_ratings)
+    print("finding best")
+    print(len(sf_breaks_ratings))
+    for i in range(0, int(len(sf_breaks_ratings)), 5):
+        print(sf_breaks_ratings[i])
+        print(sf_breaks_ratings[i+1])
+        if sf_breaks_ratings[i+1] >= max_rating_am:
             max_rating_am = sf_breaks_ratings[i+1]
             max_rated_loc_am = sf_breaks_ratings[i]
             max_am_size = sf_breaks_ratings[i+3]
-        if sf_breaks_ratings[i+2] > max_rating_pm:
+        if sf_breaks_ratings[i+2] >= max_rating_pm:
             max_rating_pm = sf_breaks_ratings[i+2]
             max_rated_loc_pm = sf_breaks_ratings[i]
             max_pm_size = sf_breaks_ratings[i+4] 
+        print("done")
+    s = "The best surf today is at " + max_rated_loc_am + ", with a rating of " + str(max_rating_am) + "/5, and is going to be around " + str(max_am_size) + "m."
+
+    mb.showinfo('Surf Forecast', s)
+
     return sf_breaks_ratings
 
 def magic_seaweed():
@@ -161,6 +176,4 @@ def findAverageBest():
             max_rated_loc_pm = sf_breaks_ratings[i]
             max_pm_size = sf_breaks_ratings[i+4] 
 
-
-print ("hellow world")
-findAverageBest()
+xx = surf_forecast()
